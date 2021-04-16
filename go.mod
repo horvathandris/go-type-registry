@@ -3,5 +3,6 @@ module github.com/horvathandris/go-type-registry
 go 1.16
 
 require (
-	github.com/spf13/cobra v1.1.3 // indirect
+	github.com/hooklift/gowsdl v0.4.0
+	github.com/spf13/cobra v1.1.3
 )

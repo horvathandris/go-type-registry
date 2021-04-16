@@ -62,7 +62,11 @@ func fillTemplate(filename string) {
 		}
 	}(out)
 
-	tmpl := template.Must(template.New("registry").Parse(registry.Template))
+	funcMap := template.FuncMap{
+		"ToLower": strings.ToLower,
+	}
+
+	tmpl := template.Must(template.New("registry").Funcs(funcMap).Parse(registry.Template))
 	err = tmpl.Execute(out, regTmplIn)
 	if err != nil {
 		log.Fatalf("execution failed: %s", err)

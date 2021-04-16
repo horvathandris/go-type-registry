@@ -11,19 +11,19 @@ import (
 )
 
 type TypeRegistry struct {
-	m map[string]reflect.Type
+	M map[string]reflect.Type
 }
 
 func newTypeRegistry() TypeRegistry {
-	return TypeRegistry{m: make(map[string]reflect.Type)}
+	return TypeRegistry{M: make(map[string]reflect.Type)}
 }
 
 func (registry TypeRegistry) set(s string, t reflect.Type) {
-	registry.m[strings.ToLower(s)] = t
+	registry.M[strings.ToLower(s)] = t
 }
 
 func (registry TypeRegistry) get(s string) (t reflect.Type, ok bool) {
-	t, ok = registry.m[strings.ToLower(s)]
+	t, ok = registry.M[strings.ToLower(s)]
 	return
 }
 

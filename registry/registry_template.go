@@ -7,7 +7,14 @@ package registry
 var Template = `
 package {{.Package}}
 
-var Types = []interface{}{ {{ range $index, $element := .TypeNames}}
-	{{$element}}{},{{end}}
+import (
+	"github.com/horvathandris/go-type-registry/registry"
+	"reflect"
+)
+
+var TypeRegistry = registry.TypeRegistry{
+	M: map[string]reflect.Type{ {{ range $index, $element := .TypeNames}}
+		"{{$element | ToLower}}": reflect.TypeOf({{$element}}{}),{{end}}
+	},
 }
 `
