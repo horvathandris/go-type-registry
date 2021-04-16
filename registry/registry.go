@@ -5,6 +5,7 @@
 package registry
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -35,8 +36,11 @@ func Create(types []interface{}) TypeRegistry {
 	return registry
 }
 
-func (registry TypeRegistry) MakeInstance(name string) interface{} {
-	t, _ := registry.get(name)
+func (registry TypeRegistry) MakeInstance(name string) (interface{}, error) {
+	t, exists := registry.get(name)
+	if !exists {
+		return nil, errors.New("no such type in the registry")
+	}
 	v := reflect.New(t).Elem()
-	return v.Interface()
+	return v.Interface(), nil
 }
