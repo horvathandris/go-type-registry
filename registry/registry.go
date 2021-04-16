@@ -1,4 +1,8 @@
-package go_type_registry
+/*
+	Package registry
+	Copyright © 2021 András Horváth horvath.andras216@gmail.com
+*/
+package registry
 
 import (
 	"fmt"
