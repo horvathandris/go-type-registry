@@ -7,24 +7,59 @@ package parser
 import (
 	"bufio"
 	"github.com/horvathandris/go-type-registry/registry"
+	"github.com/horvathandris/go-type-registry/sets"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
 	"unicode"
 )
 
 type registryTemplateInput struct {
-	Package   string
-	TypeNames []string
+	Package        string
+	TypeNamesSet   sets.StringSet
+	TypeNamesSlice []string
 }
 
-var regTmplIn registryTemplateInput
+var regTmplIn = registryTemplateInput{
+	TypeNamesSet: sets.NewStringSet(),
+}
 var findPackageName = true
 
-func Start(inFile string, outFile string) {
+func StartFile(inFile string, outFile string) {
 	parse(inFile)
 	fillTemplate(outFile)
+}
+
+func StartDir(inDir string, outFile string) {
+	for _, file := range *parseDir(inDir) {
+		parse(file)
+	}
+	fillTemplate(outFile)
+}
+
+func parseDir(rootDir string) *[]string {
+	var files []string
+	err := filepath.Walk(rootDir, walkFunc(&files))
+	if err != nil {
+		log.Fatalln("could not read some files in directory")
+	}
+	return &files
+}
+
+func walkFunc(files *[]string) filepath.WalkFunc {
+	return func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		} else if info.IsDir() {
+			return nil
+		} else if filepath.Ext(path) != ".go" {
+			return nil
+		}
+		*files = append(*files, path)
+		return nil
+	}
 }
 
 func parse(filename string) {
@@ -45,7 +80,8 @@ func parse(filename string) {
 			regTmplIn.Package = strings.TrimSpace(strings.TrimLeft(scanner.Text(), "package"))
 			findPackageName = false
 		} else if line, ok := checkIfStructInitLine(scanner.Text()); ok {
-			regTmplIn.TypeNames = append(regTmplIn.TypeNames, line)
+			regTmplIn.TypeNamesSet.Add(line)
+			//regTmplIn.TypeNames = append(regTmplIn.TypeNames, line)
 		}
 	}
 }
@@ -65,6 +101,8 @@ func fillTemplate(filename string) {
 	funcMap := template.FuncMap{
 		"ToLower": strings.ToLower,
 	}
+
+	regTmplIn.TypeNamesSlice = regTmplIn.TypeNamesSet.ToSlice()
 
 	tmpl := template.Must(template.New("registry").Funcs(funcMap).Parse(registry.Template))
 	err = tmpl.Execute(out, regTmplIn)

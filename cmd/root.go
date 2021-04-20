@@ -7,6 +7,8 @@ package cmd
 import (
 	"github.com/horvathandris/go-type-registry/parser"
 	"github.com/spf13/cobra"
+	"log"
+	"os"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -22,7 +24,16 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		parser.Start(inFileName, outFileName)
+		if singleFile {
+			if input == output {
+				log.Fatalln("Input and output cannot be the same file.")
+				return
+			}
+			parser.StartFile(input, output)
+		} else {
+			parser.StartDir(input, input+"/"+output)
+		}
+		log.Printf("Created type registry at %v .\n", output)
 	},
 }
 
@@ -32,15 +43,22 @@ func Execute() {
 	cobra.CheckErr(rootCmd.Execute())
 }
 
-var inFileName string
-var outFileName string
+var input string
+var output string
+var singleFile bool
 
 func init() {
 	cobra.OnInitialize()
 
-	rootCmd.PersistentFlags().StringVarP(&inFileName, "input", "i", "", "the input .go file, from which the registry is created")
+	log.SetFlags(0)
+	log.SetOutput(os.Stdout)
+	log.SetPrefix("✨ ")
+
+	rootCmd.PersistentFlags().StringVarP(&input, "input", "i", "", "the input directory or .go file, from which the registry is created")
 	_ = rootCmd.MarkPersistentFlagRequired("input")
 
-	rootCmd.PersistentFlags().StringVarP(&outFileName, "output", "o", "", "the output .go file, where the registry is created")
+	rootCmd.PersistentFlags().BoolVarP(&singleFile, "singlefile", "s", false, "true if you only want to parse a single file, false by default")
+
+	rootCmd.PersistentFlags().StringVarP(&output, "output", "o", "", "the output .go file, where the registry is created")
 	_ = rootCmd.MarkPersistentFlagRequired("output")
 }

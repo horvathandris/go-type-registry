@@ -2,7 +2,8 @@
 
 Create a type registry of all exported struct types in your package in Go.
 
-Currently, only supports single file parsing, but planning on implementing multi-file soon.
+Supports directory parsing as well as single file parsing. When parsing a directory
+the output registry will be created inside the directory.
 
 ## Usage
 
