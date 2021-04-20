@@ -7,7 +7,7 @@ package parser
 import (
 	"bufio"
 	"github.com/horvathandris/go-type-registry/registry"
-	"github.com/horvathandris/go-type-registry/sets"
+	"github.com/horvathandris/go-type-registry/util/sets"
 	"log"
 	"os"
 	"path/filepath"
