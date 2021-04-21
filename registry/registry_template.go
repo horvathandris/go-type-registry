@@ -12,9 +12,7 @@ import (
 	"reflect"
 )
 
-var TypeRegistry = registry.TypeRegistry{
-	M: map[string]reflect.Type{ {{ range $index, $element := .TypeNamesSlice}}
+var TypeRegistry = registry.TypeRegistry{ {{ range $index, $element := .TypeNamesSlice}}
 		"{{$element | ToLower}}": reflect.TypeOf({{$element}}{}),{{end}}
-	},
 }
 `
