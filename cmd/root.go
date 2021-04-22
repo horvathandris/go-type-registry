@@ -33,7 +33,7 @@ to quickly create a Cobra application.`,
 		} else {
 			parser.StartDir(input, input+"/"+output)
 		}
-		log.Printf("Created type registry at %v .\n", output)
+		log.Printf("Created type registry in %v .\n", output)
 	},
 }
 

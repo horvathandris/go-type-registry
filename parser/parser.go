@@ -53,8 +53,10 @@ func walkFunc(files *[]string) filepath.WalkFunc {
 		if err != nil {
 			return err
 		} else if info.IsDir() {
+			log.Printf("Ignoring directory %v\n", info.Name())
 			return nil
 		} else if filepath.Ext(path) != ".go" {
+			log.Printf("Ignoring non-go file %v\n", info.Name())
 			return nil
 		}
 		*files = append(*files, path)
@@ -63,6 +65,7 @@ func walkFunc(files *[]string) filepath.WalkFunc {
 }
 
 func parse(filename string) {
+	log.Printf("Parsing file at %v", filename)
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
